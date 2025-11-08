@@ -11,19 +11,43 @@
 ### Clone & Build
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/navjo3/queuectl
 cd queuectl
 go build -o queuectl ./cmd/queuectl
 ```
 
 ### (Optional) Add to PATH
 
-#### Windows:
+#### Windows: Easy way
 ```powershell
 move queuectl.exe C:\Windows\System32\
+or
+
+```
+#### Adding queuectl to PATH (Windows Recommended Setup)
+```powershell
+mkdir C:\Users\%USERNAME%\bin
+
+```
+Move the binary into it:
+```
+move queuectl.exe C:\Users\%USERNAME%\bin\
+```
+Add the directory to PATH:
+```
+Open Start → search: Edit the system environment variables
+Click Environment Variables
+Under User Variables, select Path → Edit
+Click New → add:
+C:\Users\%USERNAME%\bin
 ```
 
-#### Linux/macOS:
+Verify:
+```
+queuectl --help
+```
+
+##### Linux/macOS:
 ```bash
 sudo mv queuectl /usr/local/bin/
 ```
