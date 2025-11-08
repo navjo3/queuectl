@@ -45,61 +45,79 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 }
 
 func (s *Store) ClaimOne(ctx context.Context, now time.Time) (*model.Job, error) {
-	tx, err := s.DB.BeginTx(ctx, &sql.TxOptions{})
+	// SERIALIZABLE = does the safe row-locking we need in SQLite
+	tx, err := s.DB.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("begin tx: %w", err)
 	}
 	defer tx.Rollback()
 
 	var id string
 	err = tx.QueryRowContext(ctx, `
-		SELECT id FROM jobs
-		WHERE state='pending' AND available_at <= ?
+		SELECT id 
+		FROM jobs
+		WHERE state='pending'
+		  AND available_at <= ?
 		ORDER BY created_at ASC
 		LIMIT 1
 	`, now.Format(time.RFC3339Nano)).Scan(&id)
+
 	if err == sql.ErrNoRows {
 		return nil, nil // no job available
 	}
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("select pending job: %w", err)
 	}
 
-	// Try to claim job
+	// Try to mark job as processing — this is the *claim* step
 	res, err := tx.ExecContext(ctx, `
-		UPDATE jobs SET state='processing', updated_at=?
-		WHERE id = ? AND state='pending'
+		UPDATE jobs
+		SET state='processing', updated_at=?
+		WHERE id=? AND state='pending'
 	`, now.Format(time.RFC3339Nano), id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("claim update: %w", err)
 	}
+
+	// If 0 rows were updated -> another worker grabbed it first
 	rows, _ := res.RowsAffected()
 	if rows != 1 {
-		return nil, nil // lost race, another worker claimed it
+		return nil, nil
 	}
 
-	var j model.Job
+	// Load job fields
 	var createdAtStr, updatedAtStr, availableAtStr string
+	j := &model.Job{}
 
 	err = tx.QueryRowContext(ctx, `
-    SELECT id, command, state, attempts, max_retries, created_at, updated_at, available_at
-    FROM jobs WHERE id=?
-`, id).Scan(
-		&j.ID, &j.Command, &j.State, &j.Attempts, &j.MaxRetries,
-		&createdAtStr, &updatedAtStr, &availableAtStr,
+		SELECT id, command, state, attempts, max_retries,
+		       created_at, updated_at, available_at
+		FROM jobs
+		WHERE id=?
+	`, id).Scan(
+		&j.ID,
+		&j.Command,
+		&j.State,
+		&j.Attempts,
+		&j.MaxRetries,
+		&createdAtStr,
+		&updatedAtStr,
+		&availableAtStr,
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("reload job after claim: %w", err)
 	}
 
+	// Parse timestamps
 	j.CreatedAt, _ = time.Parse(time.RFC3339Nano, createdAtStr)
 	j.UpdatedAt, _ = time.Parse(time.RFC3339Nano, updatedAtStr)
 	j.AvailableAt, _ = time.Parse(time.RFC3339Nano, availableAtStr)
 
 	if err := tx.Commit(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("tx commit: %w", err)
 	}
-	return &j, nil
+
+	return j, nil
 }
 
 func (s *Store) Complete(ctx context.Context, id string, now time.Time) error {

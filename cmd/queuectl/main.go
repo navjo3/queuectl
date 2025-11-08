@@ -16,8 +16,13 @@ func main() {
 
 	root := cli.NewRootCmd()
 	root.AddCommand(cli.NewEnqueueCmd(st))
-	root.AddCommand(cli.NewWorkerCmd(st))
+
 	root.AddCommand(cli.NewListCmd(st))
+
+	workerRoot := cli.NewWorkerRootCmd()
+	workerRoot.AddCommand(cli.NewWorkerCmd(st))
+	workerRoot.AddCommand(cli.NewWorkerStopCmd())
+	root.AddCommand(workerRoot)
 
 	if err := root.Execute(); err != nil {
 		os.Exit(1)

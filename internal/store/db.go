@@ -17,11 +17,19 @@ func NewStore(path string) (*Store, error) {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
 
-	// Enable WAL mode (important for concurrency)
-	if _, err := db.Exec(`PRAGMA journal_mode=WAL;`); err != nil {
+	if _, err := db.Exec(`PRAGMA journal_mode = WAL;`); err != nil {
 		return nil, fmt.Errorf("enable WAL: %w", err)
 	}
 
+	if _, err := db.Exec(`PRAGMA busy_timeout = 5000;`); err != nil {
+		return nil, fmt.Errorf("set busy_timeout: %w", err)
+	}
+
+	if _, err := db.Exec(`PRAGMA synchronous = NORMAL;`); err != nil {
+		return nil, fmt.Errorf("set synchronous: %w", err)
+	}
+
+	// Migrate schema
 	if err := runMigrations(db); err != nil {
 		return nil, fmt.Errorf("migrate: %w", err)
 	}

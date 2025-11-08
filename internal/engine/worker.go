@@ -3,6 +3,7 @@ package engine
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"os/exec"
 	"queuectl/internal/store"
 	"time"
@@ -20,6 +21,13 @@ func NewWorker(st *store.Store) *Worker {
 
 func (w *Worker) Run(ctx context.Context) {
 	for {
+
+		//checks for stop file
+		if ShouldStop() {
+			fmt.Println("Worker stopping gracefully...")
+			return
+		}
+
 		select {
 		case <-ctx.Done():
 			fmt.Println("Worker shutting down gracefully...")
@@ -27,6 +35,7 @@ func (w *Worker) Run(ctx context.Context) {
 		default:
 		}
 
+		//claim job from queue
 		now := time.Now().UTC()
 		job, err := w.Store.ClaimOne(ctx, now)
 		if err != nil {
@@ -35,7 +44,7 @@ func (w *Worker) Run(ctx context.Context) {
 			continue
 		}
 		if job == nil {
-			time.Sleep(300 * time.Millisecond)
+			time.Sleep(time.Duration(200+rand.Intn(200)) * time.Millisecond)
 			continue
 		}
 
