@@ -7,6 +7,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+// db creation- st *store returned
 type Store struct {
 	DB *sql.DB
 }

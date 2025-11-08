@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// file for config cli functions
 func (s *Store) SetConfig(ctx context.Context, key, value string) error {
 	_, err := s.DB.ExecContext(ctx, `
 		INSERT INTO config (key, value) VALUES (?, ?)
