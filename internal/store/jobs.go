@@ -146,6 +146,7 @@ func (s *Store) FailRetry(ctx context.Context, j *model.Job, now time.Time, base
 
 	// Retry with exponential backoff: delay = base^attempts
 	delay := time.Duration(int(math.Pow(float64(base), float64(newAttempts)))) * time.Second
+
 	capDur := time.Duration(capSeconds) * time.Second
 	if delay > capDur {
 		delay = capDur

@@ -24,6 +24,11 @@ func main() {
 	workerRoot.AddCommand(cli.NewWorkerStopCmd())
 	root.AddCommand(workerRoot)
 
+	dlqRoot := cli.NewDLQRootCmd()
+	dlqRoot.AddCommand(cli.NewDLQListCmd(st))
+	dlqRoot.AddCommand(cli.NewDLQRetryCmd(st))
+	root.AddCommand(dlqRoot)
+
 	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}

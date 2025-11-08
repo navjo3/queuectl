@@ -12,6 +12,7 @@ func NewWorkerStopCmd() *cobra.Command {
 		Use:   "stop",
 		Short: "Gracefully stop running workers",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			//creates stop file
 			if err := engine.CreateStopFile(); err != nil {
 				return fmt.Errorf("failed to request stop: %w", err)
 			}
