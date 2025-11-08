@@ -16,7 +16,9 @@ type Worker struct {
 }
 
 func NewWorker(st *store.Store) *Worker {
-	return &Worker{Store: st, Base: 2, Cap: 60}
+	base := st.MustGetInt("backoff_base", 2)
+	cap := st.MustGetInt("backoff_cap_seconds", 60)
+	return &Worker{Store: st, Base: base, Cap: cap}
 }
 
 func (w *Worker) Run(ctx context.Context) {

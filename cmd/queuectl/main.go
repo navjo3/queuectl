@@ -29,6 +29,11 @@ func main() {
 	dlqRoot.AddCommand(cli.NewDLQRetryCmd(st))
 	root.AddCommand(dlqRoot)
 
+	configRoot := cli.NewConfigRootCmd()
+	configRoot.AddCommand(cli.NewConfigSetCmd(st))
+	configRoot.AddCommand(cli.NewConfigGetCmd(st))
+	root.AddCommand(configRoot)
+
 	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}

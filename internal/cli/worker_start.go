@@ -33,7 +33,7 @@ func NewWorkerCmd(st *store.Store) *cobra.Command {
 				go engine.NewWorker(st).Run(ctx)
 			}
 
-			fmt.Printf("Started %d workers (PID: %d). Use `queuectl worker stop` to stop.\n", count, os.Getpid())
+			fmt.Printf("Started %d workers. Use `queuectl worker stop` to stop.\n", count)
 
 			// Handle OS signals for graceful shutdown
 			sigCh := make(chan os.Signal, 1)
