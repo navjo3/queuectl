@@ -1,0 +1,35 @@
+# Go build artifacts
+/bin/
+/build/
+/dist/
+*.exe
+*.out
+*.test
+
+# Modules cache (not needed in repo)
+vendor/
+
+# SQLite database + WAL/shm side files
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
+# Queue state signaling files
+.queuectl-stop
+
+# Logs
+*.log
+
+# OS crap
+.DS_Store
+Thumbs.db
+
+# VS Code workspace data
+.vscode/
+.idea/
+
+# Temporary editor swap files
+*~
+*.swp
