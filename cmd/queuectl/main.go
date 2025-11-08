@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"queuectl/internal/cli"
 	"queuectl/internal/store"
@@ -12,7 +11,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("DB Created")
+	//log.Println("DB Created")
 
 	root := cli.NewRootCmd()
 	root.AddCommand(cli.NewEnqueueCmd(st))
@@ -32,6 +31,7 @@ func main() {
 	dlqRoot.AddCommand(cli.NewDLQRetryCmd(st))
 	root.AddCommand(dlqRoot)
 
+	//config cli's
 	configRoot := cli.NewConfigRootCmd()
 	configRoot.AddCommand(cli.NewConfigSetCmd(st))
 	configRoot.AddCommand(cli.NewConfigGetCmd(st))

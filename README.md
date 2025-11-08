@@ -1,5 +1,7 @@
 # QueueCTL — Flam Assignment
 
+-> [Video](https://drive.google.com/file/d/1bdB35xgUtMrD1LjNe0cf1GDR3DtgtvBo/view?usp=sharing)
+: https://drive.google.com/file/d/1bdB35xgUtMrD1LjNe0cf1GDR3DtgtvBo/view?usp=sharing 
 ---
 
 ## 1. Setup Instructions
