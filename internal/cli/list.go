@@ -9,27 +9,30 @@ import (
 )
 
 func NewListCmd(st *store.Store) *cobra.Command {
+	var state string
+
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List jobs in the queue",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			rows, err := st.DB.QueryContext(context.Background(),
-				"SELECT id, state, attempts, command FROM jobs ORDER BY created_at ASC")
+			jobs, err := st.ListJobs(context.Background(), state)
 			if err != nil {
 				return err
 			}
-			defer rows.Close()
 
-			for rows.Next() {
-				var id, state, command string
-				var attempts int
-				if err := rows.Scan(&id, &state, &attempts, &command); err != nil {
-					return err
-				}
-				fmt.Printf("%s | %s | attempts=%d | %s\n", id, state, attempts, command)
+			if len(jobs) == 0 {
+				fmt.Println("No jobs found.")
+				return nil
+			}
+
+			for _, j := range jobs {
+				fmt.Printf("%s | %-10s | attempts=%d/%d | %s\n",
+					j.ID, j.State, j.Attempts, j.MaxRetries, j.Command)
 			}
 			return nil
 		},
 	}
+
+	cmd.Flags().StringVar(&state, "state", "", "Filter by job state (pending,processing,completed,dead)")
 	return cmd
 }

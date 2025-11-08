@@ -16,8 +16,8 @@ func main() {
 
 	root := cli.NewRootCmd()
 	root.AddCommand(cli.NewEnqueueCmd(st))
-
 	root.AddCommand(cli.NewListCmd(st))
+	root.AddCommand(cli.NewStatusCmd(st))
 
 	workerRoot := cli.NewWorkerRootCmd()
 	workerRoot.AddCommand(cli.NewWorkerCmd(st))
