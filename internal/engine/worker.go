@@ -26,13 +26,13 @@ func (w *Worker) Run(ctx context.Context) {
 
 		//checks for stop file
 		if ShouldStop() {
-			fmt.Println("Worker stopping gracefully...")
+			fmt.Println("Worker stopping!")
 			return
 		}
 
 		select {
 		case <-ctx.Done():
-			fmt.Println("Worker shutting down gracefully...")
+			fmt.Println("Worker shutting down!")
 			return
 		default:
 		}
@@ -57,13 +57,13 @@ func (w *Worker) Run(ctx context.Context) {
 
 		if err == nil {
 			_ = w.Store.Complete(ctx, job.ID, time.Now().UTC())
-			fmt.Printf("Job %s completed\n", job.ID)
+			fmt.Printf("Job %s completed!\n", job.ID)
 		} else {
 			moved, _ := w.Store.FailRetry(ctx, job, time.Now().UTC(), w.Base, w.Cap, err)
 			if moved {
-				fmt.Printf("Job %s moved to DLQ\n", job.ID)
+				fmt.Printf("Job %s moved to DLQ!\n", job.ID)
 			} else {
-				fmt.Printf("Job %s failed, retry scheduled\n", job.ID)
+				fmt.Printf("Job %s failed, retry scheduled!\n", job.ID)
 			}
 		}
 	}
