@@ -21,9 +21,10 @@ go build -o queuectl ./cmd/queuectl
 #### Windows: Easy way
 ```powershell
 move queuectl.exe C:\Windows\System32\
-or
 
 ```
+### Or
+
 #### Adding queuectl to PATH (Windows Recommended Setup)
 ```powershell
 mkdir C:\Users\%USERNAME%\bin
@@ -47,7 +48,7 @@ Verify:
 queuectl --help
 ```
 
-##### Linux/macOS:
+### Linux/macOS:
 ```bash
 sudo mv queuectl /usr/local/bin/
 ```
@@ -218,5 +219,4 @@ demo | completed | attempts=0/3 | echo hi
 
 ---
 
-## License
-MIT License
+## Navjyoth Pradeep
