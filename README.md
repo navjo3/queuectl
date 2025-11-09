@@ -152,6 +152,7 @@ queuectl reset
 ## 4. Architecture Overview
 
 ```
+![alt text](image.png)
 queuectl enqueue
         ↓
  +---------------+
