@@ -149,35 +149,8 @@ queuectl reset
 
 ---
 
-## 4. Architecture Overview
-![Architecture --Excalidraw](assets\architecture.png)
-```
-
-queuectl enqueue
-        ↓
- +---------------+
- |   jobs table  |
- +-------+-------+
-         |
-         ↓ (workers select pending jobs)
- +--------------------------+
- |   Worker Engine Loop     |
- |--------------------------|
- | Fetch pending job        |
- | Mark as processing       |
- | Execute command          |
- | If success → completed   |
- | If fail → attempts++     |
- | Compute retry delay      |
- |   delay = min(base^attempts, cap) |
- | Reschedule (available_at) |
- +--------------------------+
-         |
-         ↓ (if attempts >= max_retries)
- +----------------+
- |   DLQ table    |
- +----------------+
-```
+## 4. Architecture Overview (Excalidraw Used)
+![Architecture --Excalidraw](/assets/architecture.png)
 
 ---
 
