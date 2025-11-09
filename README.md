@@ -150,9 +150,9 @@ queuectl reset
 ---
 
 ## 4. Architecture Overview
-
+![Architecture --Excalidraw](assets\architecture.png)
 ```
-![alt text](image.png)
+
 queuectl enqueue
         ↓
  +---------------+
